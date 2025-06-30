@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 
 
 const Events = () => {
+    
 
     const [searchTerm, setSearchTerm] = useState('');
     const [dateFilter, setDateFilter] = useState('all');

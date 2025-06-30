@@ -1,11 +1,10 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
+import useAuth from '../../Hooks/useAuth';
 
 const Navbar = () => {
-    const user = {
-        displayName: "Shanto",
-        photoURL: "https://i.pravatar.cc/150?img=12"
-    };
+    const {user, logout} = useAuth()
+    console.log(user);
 
     return (
         <div className="bg-base-100 shadow-sm">
@@ -29,17 +28,17 @@ const Navbar = () => {
                 
                 <div className="flex-none">
                     {!user ? (
-                        <Link to="/signin" className="btn btn-outline btn-sm">Sign In</Link>
+                        <Link to="/login" className="btn btn-outline btn-sm">Sign In</Link>
                     ) : (
                         <div className="dropdown dropdown-end">
                             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                                 <div className="w-10 rounded-full">
-                                    <img src={user.photoURL || '/default-avatar.png'} alt="User" />
+                                    <img src={user?.image || '/default-avatar.png'} alt="" />
                                 </div>
                             </div>
 
                             <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-                                <li className="text-sm font-semibold">{user.displayName || 'User'}</li>
+                                <li className="text-sm font-semibold">{user?.name}</li>
 
                                 
                                 <div className="block lg:hidden">
@@ -49,7 +48,7 @@ const Navbar = () => {
                                     <li><NavLink to="/my-events">My Event</NavLink></li>
                                 </div>
 
-                                <li><button>Logout</button></li>
+                                <li><button onClick={logout}>Logout</button></li>
                             </ul>
                         </div>
                     )}

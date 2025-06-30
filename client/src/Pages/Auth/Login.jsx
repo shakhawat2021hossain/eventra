@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaFacebook, FaGoogle, FaSpinner } from "react-icons/fa";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaFacebook, FaGoogle } from "react-icons/fa";
+import { ImSpinner9 } from "react-icons/im";
+import useAuth from '../../Hooks/useAuth';
 
 
 const Login = () => {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-    });
-
-    const [loading, setLoading] = useState(false);
-
-    const { email, password } = formData;
-
-    const onChange = e => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    const navigate = useNavigate()
+    const {login, loading} = useAuth()
+    
 
     const onSubmit = async e => {
         e.preventDefault();
-        setLoading(true);
-
+        const email = e.target.email.value;
+        const password = e.target.password.value;
+        try {
+            const res = await login({ email, password });
+            console.log(res);
+            navigate('/')
+        } catch (err) {
+            console.log("Login error", err);
+        }
     };
 
     return (
@@ -55,10 +55,7 @@ const Login = () => {
                                     id="email"
                                     name="email"
                                     type="email"
-                                    autoComplete="email"
                                     required
-                                    value={email}
-                                    onChange={onChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 />
                             </div>
@@ -76,10 +73,7 @@ const Login = () => {
                                     id="password"
                                     name="password"
                                     type="password"
-                                    autoComplete="current-password"
                                     required
-                                    value={password}
-                                    onChange={onChange}
                                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                 />
                             </div>
@@ -120,8 +114,7 @@ const Login = () => {
                             >
                                 {loading ? (
                                     <>
-                                        <FaSpinner/>
-                                        Signing in...
+                                        <ImSpinner9 className='animate-spin'/>
                                     </>
                                 ) : (
                                     'Sign in'

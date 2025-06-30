@@ -1,21 +1,31 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaFacebook, FaGoogle, FaSpinner } from 'react-icons/fa';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { FaFacebook, FaGoogle } from 'react-icons/fa';
+import { ImSpinner9 } from "react-icons/im";
+
+import useAuth from '../../Hooks/useAuth';
 
 const Register = () => {
-    const [loading, setLoading] = useState(false);
-
-
+    const { register, loading } = useAuth()
+    const navigate = useNavigate()
     const onSubmit = async e => {
         e.preventDefault();
-        setLoading(true);
 
         const name = e.target.name.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
         const image = e.target.photoUrl.value;
-        const user = {name, email, password, image}
-        console.log(user);
+        const user = { name, email, password, image }
+        // console.log(user);
+
+        try {
+            const res = await register(user)
+            console.log(res);
+            navigate('/')
+        }
+        catch (error) {
+            console.log(error);
+        }
 
     };
 
@@ -142,8 +152,7 @@ const Register = () => {
                             >
                                 {loading ? (
                                     <>
-                                        <FaSpinner/>
-                                        Registering...
+                                        <ImSpinner9 className='animate-spin' />
                                     </>
                                 ) : (
                                     'Register'
@@ -167,13 +176,13 @@ const Register = () => {
                         <div className="mt-6 grid grid-cols-2 gap-3">
                             <div>
                                 <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                    <FaGoogle/>
+                                    <FaGoogle />
                                 </button>
                             </div>
 
                             <div>
                                 <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                    <FaFacebook/>
+                                    <FaFacebook />
                                 </button>
                             </div>
                         </div>

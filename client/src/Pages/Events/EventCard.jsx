@@ -1,5 +1,4 @@
 import React from 'react';
-import { format } from 'date-fns';
 import { FaClock } from 'react-icons/fa';
 import { MdGroups } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
@@ -16,13 +15,13 @@ const EventCard = ({event}) => {
             <div className="p-6">
                 <div className="flex justify-between items-start mb-3">
                     <span className="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded">
-                        {format(new Date(event.dateTime), 'MMMM d, yyyy')}
-                        {/* {new Date(event.date)} */}
+                        {/* {format(new Date(event.date), 'MMMM d, yyyy')} */}
+                        {event.date}
                     </span>
                     <span className="flex items-center text-gray-600 text-sm">
                         <FaClock className='mr-1' />
-                        {format(new Date(event.dateTime), 'h:mm a')}
-                        {/* {new Date(event.date)} */}
+                        {/* {format(new Date(event.time), 'h:mm a')} */}
+                        {event.time}
                     </span>
                 </div>
 
@@ -33,7 +32,7 @@ const EventCard = ({event}) => {
                         alt={event.user?.name}
                         className="w-8 h-8 rounded-full mr-2"
                     />
-                    <span className="text-gray-600">{event.user?.name}</span>
+                    <span className="text-gray-600">{event.user?.name || 'Alex Hales'}</span>
                 </div>
 
                 <p className="text-gray-600 mb-4 line-clamp-2">{event.description}</p>
