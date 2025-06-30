@@ -35,13 +35,23 @@ const dbConnect = async () => {
 }
 dbConnect()
 
-
+const eventsCollection = client.db('eventra').collection('events')
 
 app.get('/', (req, res) => {
     res.json({message: "Hello, Eventra!!!"})
 })
 
+// get all events
+app.get('/events', async(req, res) =>{
+    const events = await eventsCollection.find({}).toArray();
+    // console.log(events);
+    if(!events){
+        res.status(404).json({success: false, message: "No events found"})
+        return
+    }
+    res.json({success: true, events})
 
+})
 app.listen(port, () => {
     console.log(`Database is running on port ${port}`)
 })
