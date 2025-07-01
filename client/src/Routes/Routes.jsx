@@ -5,6 +5,7 @@ import Login from "../Pages/Auth/Login";
 import Register from "../Pages/Auth/Register";
 import Events from "../Pages/Events/Events";
 import AddEvent from "../Pages/AddEvent/AddEvent";
+import MyEvents from "../Pages/MyEvents/MyEvents";
 
 export const router = createBrowserRouter([
     {
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
             {
                 path: '/add-event',
                 element: <AddEvent />
+            },
+            {
+                path: '/my-events',
+                element: <MyEvents />
             },
 
         ]

@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
@@ -97,9 +97,9 @@ app.get('/events', async (req, res) => {
 // add a event
 app.post('/events', async (req, res) => {
     const event = req.body
-    console.log(event);
+    // console.log(event);
     const result = await eventsCollection.insertOne(event)
-    console.log(result);
+    // console.log(result);
     res.status(201).send(result);
 
 })
@@ -130,8 +130,8 @@ app.post('/register', async (req, res) => {
         password: hashedPassword,
     };
     const user = await usersCollection.insertOne(newUser);
-    
-    
+
+
     const token = jwt.sign(newUser, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: '7d',
     });
@@ -140,7 +140,7 @@ app.post('/register', async (req, res) => {
         secure: process.env.NODE_ENV === 'production',
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
         maxAge: 7 * 24 * 60 * 60 * 1000,
-    }).json({ success: true, user})
+    }).json({ success: true, user })
 
 
 
@@ -196,6 +196,74 @@ app.get('/protected', verifyToken, async (req, res) => {
     // console.log(user);
     res.json({ success: true, user });
 });
+
+app.get('/my-events', verifyToken, async (req, res) => {
+    // console.log([{ "user.email": req?.user }]);
+    const events = await eventsCollection.find({ "user.user_id": req?.user?._id }).toArray()
+    // console.log(events);
+    res.json({ events })
+})
+
+// update event
+
+app.patch('/events/:id', verifyToken, async (req, res) => {
+    const eventId = req.params.id;
+    const updatedData = req.body;
+
+    try {
+        const filter = { _id: new ObjectId(eventId), "user.user_id": req.user._id }; 
+
+        const updateDoc = {
+            $set: {
+                title: updatedData.title,
+                description: updatedData.description,
+                location: updatedData.location,
+                date: updatedData.date,
+                time: updatedData.time,
+            }
+        };
+
+        const result = await eventsCollection.updateOne(filter, updateDoc);
+
+        if (result.modifiedCount === 0) {
+            return res.status(404).json({ success: false, message: "Event not found or you're not authorized to update it" });
+        }
+
+        res.send({ success: true, message: 'Event updated successfully', result });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update event', error });
+    }
+});
+
+
+// join event
+app.patch('/events/:id/join', verifyToken, async (req, res) => {
+    const eventId = req.params.id;
+    const userEmail = req.user.email;
+
+    const event = await eventsCollection.findOne({ _id: new ObjectId(eventId) });
+
+    if (!event) {
+        return res.status(404).json({ message: 'Event not found' });
+    }
+
+    if (event.attendees?.includes(userEmail)) {
+        return res.status(400).json({ message: 'You already joined this event' });
+    }
+
+    const result = await eventsCollection.updateOne(
+        { _id: new ObjectId(eventId) },
+        {
+            $inc: { attendeeCount: 1 },
+            $addToSet: { attendees: userEmail }
+        }
+    );
+
+    res.send({ message: 'Event joined successfully', result });
+});
+
+
+
 
 app.listen(port, () => {
     console.log(`Database is running on port ${port}`)

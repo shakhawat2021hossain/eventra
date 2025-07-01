@@ -37,8 +37,8 @@ const Navbar = () => {
                                 </div>
                             </div>
 
-                            <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
-                                <li className="text-sm font-semibold">{user?.name}</li>
+                            <ul tabIndex={0} className="text-center mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-30">
+                                <li className="font-semibold">{user?.name}</li>
 
                                 
                                 <div className="block lg:hidden">
@@ -48,7 +48,7 @@ const Navbar = () => {
                                     <li><NavLink to="/my-events">My Event</NavLink></li>
                                 </div>
 
-                                <li><button onClick={logout}>Logout</button></li>
+                                <li className='mx-auto'><button className='text-md' onClick={logout}>Logout</button></li>
                             </ul>
                         </div>
                     )}
